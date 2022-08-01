@@ -1,0 +1,4 @@
+backend:
+    url: 'https://example.com'
+    username: 'username'
+    password: 'password'

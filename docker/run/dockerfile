@@ -1,0 +1,2 @@
+FROM ubuntu
+CMD ["/bin/sh","-c","/code/code < /code/code.in > /code/code.out 2> /code/code.err"]
