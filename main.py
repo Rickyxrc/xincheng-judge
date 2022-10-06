@@ -1,4 +1,3 @@
-from ast import Try
 import requests
 import json
 import os
@@ -118,7 +117,8 @@ try:
             #print('container removed.')
 
             log("开始编译.")
-            os.system("docker run --name judge -m "+str(int(judgedata['memlimit'])*3)+"m -v D:\\编程项目\\xinchengoj.nogit\\xincheng-judge\\code:/code rickyxrc/xinchengoj-judge")
+            os.system("docker run --name judge -v /home/xjcw/xcjudge/code:/code rickyxrc/xincheng-judge")
+            #print("docker run --name judge -v /home/xjcw/xcjudge/code:/code rickyxrc/xincheng-judge")
             log("编译完成.")
 
             os.system("docker stop judge")
@@ -146,10 +146,13 @@ try:
                 os.system("rm ./run/code.out 2>nul")
                 shutil.copy("./code/code", "./run/code")
                 try:
+                    # print('------------------',str(judgedata['problem']))
                     for i in os.listdir('./testdata/'+str(judgedata['problem'])):
+                        # print("////////",i)
                         if i[-1] == 'n':
-                            shutil.copy("./testdata/" +
-                                        str(judgedata['problem'])+'/'+i, "./run/code.in")
+                            os.system("rm ./run/code.in")
+                            os.system("cp ./testdata/" +
+                                        str(judgedata['problem'])+'/'+i+" ./run/code.in")
 
                             os.system("docker stop runner")
                             #print('container killed.')
@@ -159,7 +162,7 @@ try:
 
                             #print("pre-start process......")
                             subprocess.Popen(
-                                "docker run -m "+str(judgedata['memlimit'])+"m --name runner -v D:\\编程项目\\xinchengoj.nogit\\xincheng-judge\\run:/code rickyxrc/xcrun", shell=True)
+                                "docker run --name runner -v /home/xjcw/xcjudge/run:/code rickyxrc/xcrun", shell=True)
                             #print("start process......")
 
                             time.sleep(2)
@@ -187,9 +190,9 @@ try:
                             else:
                                 if used_ms <= int(judgedata['timelimit']):
                                     f = open("./run/code.out").read().strip()
-
-                                    a = open(
-                                        "./testdata/"+str(judgedata['problem'])+"/"+i.split('.')[0]+'.ans').read().strip()
+                                    
+                                    # print("..............","./testdata/"+str(judgedata['problem'])+"/"+i.split('.')[0]+'.ans')
+                                    a = open("./testdata/"+str(judgedata['problem'])+"/"+i.split('.')[0]+'.ans').read().strip()
 
                                     # #print(f)
                                     # #print(a)
@@ -219,7 +222,7 @@ try:
                     #print("NO TEST DATA!")
 
                     # #print(t['id'], "OK")
-        time.sleep(30)
+        # time.sleep(30)
         # #print("fetching.....")
 except KeyboardInterrupt:
     log("正在停止......")
